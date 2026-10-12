@@ -1,0 +1,9 @@
+# name,env,capacity,used
+web-01,prod,120,50
+web-02,prod,120,50
+db-01,prod,240,230
+
+cache-01,stage,64,60
+test-01,stage,0,10
+test-02,prod,120,-5
+ci-01,dev,500,100
