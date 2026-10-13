@@ -17,7 +17,7 @@ def is_invalid(usage):
 def get_percent(mount):
     return mount["used"] / mount["capacity"] * 100
 
-def get_status(percent, warning, critical):
+def get_status(percent, warning=75, critical=90):
     if percent >= critical:
         return "CRITICAL"
     if percent >= warning:
@@ -30,15 +30,6 @@ def get_exit_code(counts):
     if counts["WARNING"] > 0:
         return 1
     return 0
-    servers = []
-    with open(path, encoding="utf-8") as f:
-        for line in f:
-            parsed_line = parse_line(line)
-            if parsed_line == None:
-                continue
-            else:
-                servers.append(parsed_line)
-    return servers
 
 def load_mounts(path):
     mounts = []
@@ -66,11 +57,6 @@ def get_thresholds():
     return warning, critical
 
 def main():
-
-    # Логируем запуск программы
-    with open("report.log", "a", encoding="utf-8") as f:
-        host_name = get_hostname()
-        f.write(f"=== Запуск {datetime.now().strftime("%Y-%m-%d %H:%M:%S")} на {host_name} ===\n")
 
     # Заводим переменные
     script_dir = Path(__file__).parent
@@ -121,8 +107,12 @@ def main():
     report = "\n".join(report)
     print(report)
 
-    with open("report.log", "a", encoding="utf-8") as f:
+        # Логируем запуск программы
+    with open(script_dir/"report.log", "a", encoding="utf-8") as f:
+        host_name = get_hostname()
+        f.write(f"=== Запуск {datetime.now().strftime("%Y-%m-%d %H:%M:%S")} на {host_name} ===\n")
         f.write(report + "\n")
+
 
     return get_exit_code(counts)
 
