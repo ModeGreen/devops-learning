@@ -1,0 +1,6 @@
+# точки монтирования
+/
+/home
+/mnt/c
+
+/no/such/mount
