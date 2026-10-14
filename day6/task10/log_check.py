@@ -11,7 +11,7 @@ def parse_line(line):
         request["status"] = int(request["status"])
         request["size"] = int(request["size"])
     except ValueError:
-        raise ValueError(f"Ошибка: от 'статус' и 'код' ожидался тип 'int', получены {type(request["status"])} и {type(request["size"])}")
+        raise ValueError(f"Ошибка: от 'код' и 'размер' ожидался тип 'int', получены {request["status"]} и {request["size"]}")
     return request
 
 def load_requests(path):
@@ -44,18 +44,19 @@ def get_error_rate(requests):
     percent_of_5xx = count_of_5xx / len(requests) * 100
     return percent_of_5xx
 
-def get_top_ip(requests):    
+def get_top_ip(requests):  
+    count = {}
+    for request in requests:
+        count[request["ip"]] = count.get(request["ip"], 0) + 1
+
     top_ip_calls = 0
     top_ip = ""
-    for request in requests:
-        ip_calls = 0
-        ip = request["ip"]
-        for i in requests:
-            if i["ip"] == ip:
-                ip_calls += 1
-        if ip_calls > top_ip_calls:
-            top_ip_calls = ip_calls
+
+    for ip in count:
+        if count[ip] > top_ip_calls:
+            top_ip_calls = count[ip]
             top_ip = ip
+
     return top_ip, top_ip_calls
 
 def get_max_error_rate():
@@ -91,7 +92,7 @@ def main():
     try:
         requests, bad_count = load_requests(source_path)
     except FileNotFoundError as e:
-        print(f"ОШИБКА: {e}", file=sys.stderr)
+        print(e, file=sys.stderr)
         return 3
 
     try:
@@ -112,7 +113,7 @@ def main():
     report.append(f"Запросов: {len(requests)} (битых строк: {bad_count})")
     report.append(f"Коды ответа:")
     for status in sorted_status_counts:
-        report.append(f"{status} {status_counts[status]}")
+        report.append(f"{status}: {status_counts[status]}")
     report.append(f"Самый активный IP: {top_ip} ({top_ip_calls} запросов)")
     report.append(f"Ошибки 5xx: {error_rate:.1f}% (порог {max_rate}%)")
     if exit_code == 2:
