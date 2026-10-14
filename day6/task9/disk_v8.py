@@ -129,16 +129,17 @@ def main():
     report.append(f"Пропущены: "+", ".join(skipped_mounts))
     report.append(f"Самый заполненный: {highest_percentage_name} ({highest_percentage:.1f}%)")
 
+    report = "\n".join(report)
+
         # Логируем запуск программы
     try:
         with open(script_dir/"report.log", "a", encoding="utf-8") as f:
             host_name = get_hostname()
             f.write(f"=== Запуск {datetime.now().strftime("%Y-%m-%d %H:%M:%S")} на {host_name} ===\n")
-            f.write(f"{report} + \n")
+            f.write(report + "\n")
     except PermissionError as e:
         print(f"ВНИМАНИЕ: не удалось записать лог: {e}", file=sys.stderr)
     
-    report = "\n".join(report)
     print(report)
 
     return get_exit_code(counts)
