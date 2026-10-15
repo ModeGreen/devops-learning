@@ -1,0 +1,1 @@
+zcat old.log.gz

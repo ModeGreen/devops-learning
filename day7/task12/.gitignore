@@ -1,0 +1,4 @@
+app.log
+nginx.conf
+old.log.gz
+live.log
