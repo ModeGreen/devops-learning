@@ -1,0 +1,52 @@
+# orders-api — конфиг сервиса
+# Задача 13: править только в nano!
+
+service:
+  name: orders-api
+  version: 2.4.1
+  debug: false
+  workers: 4
+
+database:
+  host: db.internal
+  port: 5432
+  name: orders
+  user: orders_app
+  pool_size: 10
+
+replica:
+  host: db.internal
+  port: 5433
+
+cache:
+  host: redis.internal
+  port: 6379
+  ttl: 300
+
+logging:
+  level: info
+  file: /var/log/orders-api/app.log
+  max_size_mb: 100
+
+server:
+  host: 0.0.0.0
+  port: 8080
+  timeout: 30
+
+backup:
+  source: db.internal
+  target: s3://orders-backup
+  schedule: "0 3 * * *"
+
+migrations:
+  db: db.internal
+  dir: /opt/orders-api/migrations
+
+metrics:
+  enabled: true
+  path: /metrics
+  port: 9100
+
+healthcheck:
+  path: /health
+  interval: 10
