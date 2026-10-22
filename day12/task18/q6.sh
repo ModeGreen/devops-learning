@@ -1,0 +1,1 @@
+find shop/ -name '*.yaml'

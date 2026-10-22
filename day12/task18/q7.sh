@@ -1,0 +1,1 @@
+find ./shop -type d
