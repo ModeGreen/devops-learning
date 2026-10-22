@@ -1,1 +1,1 @@
-find ./shop -mtime +7 -delete
+find ./shop/logs -mtime +7 -delete
