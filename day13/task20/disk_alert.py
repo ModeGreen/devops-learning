@@ -37,7 +37,7 @@ def find_alerts(disks, warning, critical):
         status = get_status(percent, warning, critical)
         if status != "OK":
             alerts.append({"name": disk["name"], "percent": round(percent, 1), "status": status})
-        return alerts
+    return alerts
 
 
 def get_exit_code(alerts):
