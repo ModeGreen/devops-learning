@@ -1,0 +1,25 @@
+# git log --oneline --graph --all
+*   Merge branch 'change-port' (Artemii Gorban)
+|\  
+| * Change port to 9090 (Oleg)
+* | Add healthcheck path to config (Artemii Gorban)
+* | Set port to 8000 (Anna)
+|/  
+* Add shop config and README (Anna)
+
+# config.yaml в main
+# Конфиг сервиса shop
+service: shop
+
+port: 9090
+
+workers: 2
+
+database:
+  host: db.internal
+  name: shop
+
+logging:
+  level: info
+
+healthcheck: /health
