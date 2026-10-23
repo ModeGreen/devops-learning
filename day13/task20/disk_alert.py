@@ -55,7 +55,7 @@ def main():
 
     try:
         disks = load_disks(disks_file)
-    except FileNotFoundError as e:
+    except (FileNotFoundError, json.decoder.JSONDecodeError) as e:
         print(f"ОШИБКА: {e}", file=sys.stderr)
         return 3
 
