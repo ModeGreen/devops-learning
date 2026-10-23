@@ -17,8 +17,8 @@ def load_disks(path):
 
 
 def get_thresholds():
-    warning = os.environ.get("DISK_WARNING", 75)
-    critical = os.environ.get("DISK_CRITICAL", 90)
+    warning = int(os.environ.get("DISK_WARNING", 75))
+    critical = int(os.environ.get("DISK_CRITICAL", 90))
     return warning, critical
 
 
