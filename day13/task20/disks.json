@@ -1,0 +1,7 @@
+[
+  {"name": "/", "used_gb": 41, "total_gb": 50},
+  {"name": "/var", "used_gb": 93, "total_gb": 100},
+  {"name": "/home", "used_gb": 120, "total_gb": 500},
+  {"name": "/data", "used_gb": 900, "total_gb": 1000},
+  {"name": "/backup", "used_gb": 300, "total_gb": 400}
+]
