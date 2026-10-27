@@ -1,1 +1,1 @@
-pgrep -af 'shop'
+pgrep -af 'shop/bin'
