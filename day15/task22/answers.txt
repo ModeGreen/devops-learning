@@ -1,0 +1,2 @@
+cpu: shop-worker.sh
+mem: shop-cache.py
