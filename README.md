@@ -52,8 +52,10 @@ python3 day2/disk_v2.py
 - [x] Development environment (WSL2, VS Code, Git)
 - [x] Linux terminal basics
 - [x] Python: variables, types, conditionals
-- [ ] Python: loops, functions, files, error handling
-- [ ] Git & GitHub workflow
+- [x] Python: loops, functions, files, error handling
+- [x] Python: virtual environments, YAML configs, REST APIs
+- [x] Linux: permissions, users and groups, search, pipes, processes
+- [ ] Git & GitHub workflow (branches and merges done, pull requests in progress)
 - [ ] Bash scripting
 - [ ] Networking, SSH, Nginx
 - [ ] Docker
