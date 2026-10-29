@@ -1,0 +1,4 @@
+ubuntu: 26.04
+jq-version: 1.8.1-4ubuntu2
+jq-depends: libjq1 (= 1.8.1-4ubuntu2), libc6 (>= 2.38), libonig5 (>= 6.8.1)
+ncdu-path: /usr/bin/ncdu
