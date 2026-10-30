@@ -1,14 +1,12 @@
-"""disk_alert.py — проверяет заполненность дисков из JSON-файла
-и записывает проблемные диски в alerts.json.
-
-Запуск:  python3 disk_alert.py [файл_с_дисками]   (по умолчанию disks.json)
-Пороги:  переменные окружения DISK_WARNING (75) и DISK_CRITICAL (90).
-Коды выхода (как у Nagios): 0 — OK, 1 — WARNING, 2 — CRITICAL, 3 — ошибка.
-"""
 import json
 import os
 import sys
 from pathlib import Path
+import subprocess
+
+def get_df_output():
+    result = subprocess.run(["df", "-P"], capture_output=True, text=True)
+    return result.stdout
 
 
 def load_disks(path):
