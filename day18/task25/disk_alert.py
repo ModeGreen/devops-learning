@@ -6,6 +6,8 @@ import subprocess
 
 def get_df_output():
     result = subprocess.run(["df", "-P"], capture_output=True, text=True)
+    if result.returncode != 0:
+        raise RuntimeError(f"{result.stderr.strip()}")
     return result.stdout
 
 def is_real_disk(filesystem):
@@ -32,12 +34,10 @@ def load_disks(path):
     with open(path, encoding="utf-8") as f:
         return json.load(f)
 
-
 def get_thresholds():
     warning = int(os.environ.get("DISK_WARNING", 75))
     critical = int(os.environ.get("DISK_CRITICAL", 90))
     return warning, critical
-
 
 def get_status(percent, warning, critical):
     if percent >= critical:
@@ -45,7 +45,6 @@ def get_status(percent, warning, critical):
     if percent >= warning:
         return "WARNING"
     return "OK"
-
 
 def find_alerts(disks, warning, critical):
     alerts = []
@@ -56,7 +55,6 @@ def find_alerts(disks, warning, critical):
             alerts.append({"name": disk["name"], "percent": round(percent, 1), "status": status})
     return alerts
 
-
 def get_exit_code(alerts):
     code = 0
     for alert in alerts:
@@ -65,14 +63,12 @@ def get_exit_code(alerts):
         code = 1
     return code
 
-
 def main():
     script_dir = Path(__file__).parent
-    disks_file = sys.argv[1] if len(sys.argv) > 1 else script_dir / "disks.json"
 
     try:
-        disks = load_disks(disks_file)
-    except (FileNotFoundError, json.decoder.JSONDecodeError) as e:
+        disks = parse_df(get_df_output())
+    except RuntimeError as e:
         print(f"ОШИБКА: {e}", file=sys.stderr)
         return 3
 
@@ -87,7 +83,6 @@ def main():
         print(f"  {alert['name']}: {alert['percent']}% — {alert['status']}")
 
     return get_exit_code(alerts)
-
 
 if __name__ == "__main__":
     sys.exit(main())
