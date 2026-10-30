@@ -8,6 +8,25 @@ def get_df_output():
     result = subprocess.run(["df", "-P"], capture_output=True, text=True)
     return result.stdout
 
+def is_real_disk(filesystem):
+    if filesystem.startswith('/dev/') and not filesystem.startswith('/dev/loop'):
+        return True
+    else:
+        return False
+
+def parse_df(text):
+    mounts = []
+    for line in text.splitlines():
+        if line.startswith('Filesystem'):
+            continue
+        line = line.split()
+        if not is_real_disk(line[0]):
+            continue
+        name = line[5]
+        used = int(line[2])/1024**2
+        total = int(line[1])/1024**2
+        mounts.append({"name": name, "used_gb": used, "total_gb": total})
+    return mounts
 
 def load_disks(path):
     with open(path, encoding="utf-8") as f:
