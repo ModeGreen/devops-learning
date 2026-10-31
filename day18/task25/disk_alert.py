@@ -69,8 +69,12 @@ def main():
         print(f"ОШИБКА: {e}", file=sys.stderr)
         return 3
 
-    warning, critical = get_thresholds()
-    alerts = find_alerts(disks, warning, critical)
+    try:
+        warning, critical = get_thresholds()
+        alerts = find_alerts(disks, warning, critical)
+    except ValueError as e:
+        print(f"ОШИБКА: {e}", file=sys.stderr)
+        return 3
 
     with open(script_dir / "alerts.json", "w", encoding="utf-8") as f:
         json.dump(alerts, f, indent=2, ensure_ascii=False)
