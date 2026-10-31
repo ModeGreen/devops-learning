@@ -1,3 +1,11 @@
+"""disk_alert.py — проверяет заполненность дисков из JSON-файла
+и записывает проблемные диски в alerts.json.
+
+Запуск:  python3 disk_alert.py
+Пороги:  переменные окружения DISK_WARNING (75) и DISK_CRITICAL (90).
+Коды выхода (как у Nagios): 0 — OK, 1 — WARNING, 2 — CRITICAL, 3 — ошибка.
+"""
+
 import json
 import os
 import sys
@@ -7,7 +15,7 @@ import subprocess
 def get_findmnt_output():
     result = subprocess.run(["findmnt", "-D", "-O", "rw", "-b", "-J"], capture_output=True, text=True)
     if result.returncode != 0:
-        raise RuntimeError(f"{result.stderr.strip()}")
+        raise RuntimeError(f"findmnt завершился с кодом {result.returncode}: {result.stderr.strip()}")
     return result.stdout
 
 def is_real_disk(source):
@@ -26,10 +34,6 @@ def parse_findmnt(data):
         total_gb = int(mount["size"]) / 1024**3
         mounts.append({"name": mount["target"], "used_gb": used_gb, "total_gb": total_gb})
     return mounts
-
-def load_disks(path):
-    with open(path, encoding="utf-8") as f:
-        return json.load(f)
 
 def get_thresholds():
     warning = int(os.environ.get("DISK_WARNING", 75))
@@ -66,7 +70,7 @@ def main():
     try:
         disks = parse_findmnt(get_findmnt_output())
     except RuntimeError as e:
-        print(f"ОШИБКА: {e}", file=sys.stderr)
+        print(f"ОШИБКА: {e} ", file=sys.stderr)
         return 3
 
     try:
