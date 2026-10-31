@@ -4,30 +4,27 @@ import sys
 from pathlib import Path
 import subprocess
 
-def get_df_output():
-    result = subprocess.run(["df", "-P"], capture_output=True, text=True)
+def get_findmnt_output():
+    result = subprocess.run(["findmnt", "-D", "-O", "rw", "-b", "-J"], capture_output=True, text=True)
     if result.returncode != 0:
         raise RuntimeError(f"{result.stderr.strip()}")
     return result.stdout
 
-def is_real_disk(filesystem):
-    if filesystem.startswith('/dev/') and not filesystem.startswith('/dev/loop'):
+def is_real_disk(source):
+    if source.startswith('/dev/') and not source.startswith('/dev/loop'):
         return True
     else:
         return False
 
-def parse_df(text):
+def parse_findmnt(data):
+    data = json.loads(data)["filesystems"]
     mounts = []
-    for line in text.splitlines():
-        if line.startswith('Filesystem'):
+    for mount in data:
+        if not is_real_disk(mount["source"]):
             continue
-        line = line.split()
-        if not is_real_disk(line[0]):
-            continue
-        name = line[5]
-        used = int(line[2])/1024**2
-        total = int(line[1])/1024**2
-        mounts.append({"name": name, "used_gb": used, "total_gb": total})
+        used_gb = int(mount["used"]) / 1024**3
+        total_gb = int(mount["size"]) / 1024**3
+        mounts.append({"name": mount["target"], "used_gb": used_gb, "total_gb": total_gb})
     return mounts
 
 def load_disks(path):
@@ -67,7 +64,7 @@ def main():
     script_dir = Path(__file__).parent
 
     try:
-        disks = parse_df(get_df_output())
+        disks = parse_findmnt(get_findmnt_output())
     except RuntimeError as e:
         print(f"ОШИБКА: {e}", file=sys.stderr)
         return 3
