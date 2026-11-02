@@ -1,0 +1,5 @@
+web-unit: /etc/systemd/system/shop-web.service
+web-autostart: disabled
+web-port: 8081
+failed-service: shop-mailer
+mailer-config: /etc/shop/mailer.conf
