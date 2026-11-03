@@ -41,16 +41,14 @@ def parse_findmnt(data):
         mounts.append({"name": mount["target"], "used_gb": used_gb, "total_gb": total_gb})
     return mounts
 
-def get_thresholds(name, config):
-    if name in config["ignore"]:
-        return False
+def get_disk_thresholds(name, config):
     if "disks" in config:
         if name in config["disks"]:
-            warning = config["disks"][name]["warning"]
-            critical = config["disks"][name]["critical"]
-        else:
-            warning = config["default"][name]["warning"]
-            critical = config["default"][name]["critical"]
+            warning = config["disks"][name].get("warning", config["default"]["warning"])
+            critical = config["disks"][name].get("critical", config["default"]["critical"])
+            return warning, critical
+    warning = config["default"]["warning"]
+    critical = config["default"]["critical"]
     return warning, critical
 
 def get_status(percent, warning, critical):
@@ -60,9 +58,10 @@ def get_status(percent, warning, critical):
         return "WARNING"
     return "OK"
 
-def find_alerts(disks, warning, critical):
+def find_alerts(disks, config):
     alerts = []
     for disk in disks:
+        warning, critical = get_disk_thresholds(disk["name"], config)
         percent = disk["used_gb"] / disk["total_gb"] * 100
         status = get_status(percent, warning, critical)
         if status != "OK":
@@ -88,8 +87,7 @@ def main():
         return 3
 
     try:
-        warning, critical = get_thresholds()
-        alerts = find_alerts(disks, warning, critical)
+        alerts = find_alerts(disks, config)
     except ValueError as e:
         print(f"ОШИБКА: {e}", file=sys.stderr)
         return 3
