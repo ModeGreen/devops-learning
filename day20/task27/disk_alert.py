@@ -41,6 +41,13 @@ def parse_findmnt(data):
         mounts.append({"name": mount["target"], "used_gb": used_gb, "total_gb": total_gb})
     return mounts
 
+def remove_ignored(disks, config):
+    ignored_removed = []
+    for disk in disks:
+        if not disk["name"] in config.get("ignore", []):
+            ignored_removed.append(disk)
+    return ignored_removed
+
 def get_disk_thresholds(name, config):
     if "disks" in config:
         if name in config["disks"]:
@@ -85,6 +92,8 @@ def main():
     except RuntimeError as e:
         print(f"ОШИБКА: {e} ", file=sys.stderr)
         return 3
+
+    disks = remove_ignored(disks, config)
 
     try:
         alerts = find_alerts(disks, config)
