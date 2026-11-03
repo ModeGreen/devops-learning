@@ -85,7 +85,11 @@ def get_exit_code(alerts):
 
 def main():
     script_dir = Path(__file__).parent
-    config = load_config(script_dir / "disk_alert.yaml")
+    try:
+        config = load_config(os.environ.get("DISK_ALERT_CONFIG", script_dir / "disk_alert.yaml"))
+    except (FileNotFoundError, yaml.parser.ParserError) as e:
+        print(f"ОШИБКА: {e}", file=sys.stderr)
+        return 3
 
     try:
         disks = parse_findmnt(get_findmnt_output())
