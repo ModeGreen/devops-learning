@@ -30,6 +30,10 @@ Every exercise, script and small project from my learning lives here, committed 
 | `day13/` | Git branches, merges and conflict resolution; debugging a buggy Python script (tasks 19–20) |
 | `day14/` | Output redirection and pipes: log reports with `cut`, `sort`, `uniq` (task 21) |
 | `day15/` | Linux processes: `ps`, `pgrep`, `top`, `kill` and signals (task 22) |
+| `day16/` | Linux package management with `apt`: updating the system, installing and purging packages (task 24) |
+| `day18/` | `disk_alert.py` on real disks: `findmnt` JSON output via `subprocess`, filtering real devices, error handling (task 25) |
+| `day19/` | Linux services with `systemd`: `systemctl` status, start/stop, enable, troubleshooting with `journalctl` (task 26) |
+| `day20/` | `disk_alert.py` with a YAML config: per-disk thresholds, ignore list, config validation, `venv` + PyYAML (task 27) |
 
 ## Highlights
 
@@ -54,8 +58,8 @@ python3 day2/disk_v2.py
 - [x] Python: variables, types, conditionals
 - [x] Python: loops, functions, files, error handling
 - [x] Python: virtual environments, YAML configs, REST APIs
-- [x] Linux: permissions, users and groups, search, pipes, processes
-- [ ] Git & GitHub workflow (branches and merges done, pull requests in progress)
+- [x] Linux: permissions, users and groups, search, pipes, processes, packages, services
+- [x] Git & GitHub workflow: branches, merges, conflicts, pull requests
 - [ ] Bash scripting
 - [ ] Networking, SSH, Nginx
 - [ ] Docker
