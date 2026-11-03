@@ -49,13 +49,16 @@ def remove_ignored(disks, config):
     return ignored_removed
 
 def get_disk_thresholds(name, config):
+    warning = config["default"]["warning"]
+    critical = config["default"]["critical"]
     if "disks" in config:
         if name in config["disks"]:
             warning = config["disks"][name].get("warning", config["default"]["warning"])
             critical = config["disks"][name].get("critical", config["default"]["critical"])
-            return warning, critical
-    warning = config["default"]["warning"]
-    critical = config["default"]["critical"]
+    if type(warning) != int or type(critical) != int:
+        raise ValueError(f"{name}: warning и critical должны быть int")
+    if not critical > warning:
+        raise ValueError(f"{name}: warning ({warning}) должен быть меньше critical ({critical})")
     return warning, critical
 
 def get_status(percent, warning, critical):
