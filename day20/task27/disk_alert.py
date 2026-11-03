@@ -2,7 +2,7 @@
 и записывает проблемные диски в alerts.json.
 
 Запуск:  python3 disk_alert.py
-Пороги:  переменные окружения DISK_WARNING (75) и DISK_CRITICAL (90).
+Пороги:  загружаются из disk_alert.yaml, который лежит рядом со скриптом, и передаются в find_alerts.
 Коды выхода (как у Nagios): 0 — OK, 1 — WARNING, 2 — CRITICAL, 3 — ошибка.
 """
 
@@ -11,6 +11,12 @@ import os
 import sys
 from pathlib import Path
 import subprocess
+import yaml
+
+def load_config(path):
+    with open(path, encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+    return data
 
 def get_findmnt_output():
     result = subprocess.run(["findmnt", "-D", "-O", "rw", "-b", "-J"], capture_output=True, text=True)
@@ -35,9 +41,16 @@ def parse_findmnt(data):
         mounts.append({"name": mount["target"], "used_gb": used_gb, "total_gb": total_gb})
     return mounts
 
-def get_thresholds():
-    warning = int(os.environ.get("DISK_WARNING", 75))
-    critical = int(os.environ.get("DISK_CRITICAL", 90))
+def get_thresholds(name, config):
+    if name in config["ignore"]:
+        return False
+    if "disks" in config:
+        if name in config["disks"]:
+            warning = config["disks"][name]["warning"]
+            critical = config["disks"][name]["critical"]
+        else:
+            warning = config["default"][name]["warning"]
+            critical = config["default"][name]["critical"]
     return warning, critical
 
 def get_status(percent, warning, critical):
@@ -66,6 +79,7 @@ def get_exit_code(alerts):
 
 def main():
     script_dir = Path(__file__).parent
+    config = load_config(script_dir / "disk_alert.yaml")
 
     try:
         disks = parse_findmnt(get_findmnt_output())
