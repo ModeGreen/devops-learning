@@ -1,8 +1,10 @@
-"""disk_alert.py — проверяет заполненность дисков из JSON-файла
+"""disk_alert.py — проверяет заполненность настоящих дисков сервера (из findmnt)
 и записывает проблемные диски в alerts.json.
 
-Запуск:  python3 disk_alert.py
-Пороги:  загружаются из disk_alert.yaml, который лежит рядом со скриптом, и передаются в find_alerts.
+Запуск:     python3 disk_alert.py
+Настройки:  disk_alert.yaml рядом со скриптом или файл из переменной окружения DISK_ALERT_CONFIG.
+            default — пороги для всех дисков, disks — свои пороги для отдельных дисков,
+            ignore — диски, которые не проверяем.
 Коды выхода (как у Nagios): 0 — OK, 1 — WARNING, 2 — CRITICAL, 3 — ошибка.
 """
 
@@ -90,7 +92,7 @@ def main():
     script_dir = Path(__file__).parent
     try:
         config = load_config(os.environ.get("DISK_ALERT_CONFIG", script_dir / "disk_alert.yaml"))
-    except (FileNotFoundError, yaml.parser.ParserError) as e:
+    except (OSError, yaml.YAMLError) as e:
         print(f"ОШИБКА: {e}", file=sys.stderr)
         return 3
 
