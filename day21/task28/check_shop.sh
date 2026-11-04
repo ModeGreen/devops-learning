@@ -7,4 +7,8 @@ echo "ОШИБКА: нужeн 1 аргумент: папка. Получено: 
 exit 3
 fi
 dir="$1"
+if [ ! -d "$dir" ]; then
+echo "ОШИБКА: нет папки $dir" >&2
+exit 3
+fi
 echo "Папка: $dir"
