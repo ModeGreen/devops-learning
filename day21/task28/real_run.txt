@@ -1,0 +1,12 @@
+Проверка shop на сервере mindserver
+Папка: /home/artemio/task28/shop
+WARNING: ошибок в логе: 3
+код 1
+Проверка shop на сервере mindserver
+Папка: /home/artemio/task28/shop-broken
+CRITICAL: нет файла /home/artemio/task28/shop-broken/config.yaml
+код 2
+Проверка shop на сервере mindserver
+Папка: /home/artemio/task28/shop old
+CRITICAL: ошибок в логе: 12
+код 2

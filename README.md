@@ -34,6 +34,7 @@ Every exercise, script and small project from my learning lives here, committed 
 | `day18/` | `disk_alert.py` on real disks: `findmnt` JSON output via `subprocess`, filtering real devices, error handling (task 25) |
 | `day19/` | Linux services with `systemd`: `systemctl` status, start/stop, enable, troubleshooting with `journalctl` (task 26) |
 | `day20/` | `disk_alert.py` with a YAML config: per-disk thresholds, ignore list, config validation, `venv` + PyYAML (task 27) |
+| `day21/` | Bash scripting basics: variables, script arguments, exit codes, `if` conditions — a Nagios-style health check for a service, run on a home Ubuntu Server (task 28) |
 
 ## Highlights
 
