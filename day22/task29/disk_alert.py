@@ -17,7 +17,8 @@ import yaml
 from datetime import datetime
 
 def make_history_line(now, host, status, text):
-    return f"{now.strftime("%Y-%m-%d %H:%M:%S")} {host} {status} {text}"
+    text = " ".join(text.split())
+    return f"{now.strftime('%Y-%m-%d %H:%M:%S')} {host} {status} {text}"
 
 def write_history(path, status, text):
     host = subprocess.run(["hostname"], capture_output=True, text=True)
@@ -105,13 +106,17 @@ def main():
     try:
         config = load_config(os.environ.get("DISK_ALERT_CONFIG", script_dir / "disk_alert.yaml"))
     except (OSError, yaml.YAMLError) as e:
-        print(f"ОШИБКА: {e}", file=sys.stderr)
+        massage = f"ОШИБКА: {e}"
+        print(massage, file=sys.stderr)
+        write_history(journal, "UNKNOWN", massage)
         return 3
 
     try:
         disks = parse_findmnt(get_findmnt_output())
     except RuntimeError as e:
-        print(f"ОШИБКА: {e} ", file=sys.stderr)
+        massage = f"ОШИБКА: {e}"
+        print(massage, file=sys.stderr)
+        write_history(journal, "UNKNOWN", massage)
         return 3
 
     disks = remove_ignored(disks, config)
@@ -119,7 +124,9 @@ def main():
     try:
         alerts = find_alerts(disks, config)
     except ValueError as e:
+        massage = f"ОШИБКА: {e}"
         print(f"ОШИБКА: {e}", file=sys.stderr)
+        write_history(journal, "UNKNOWN", massage)
         return 3
 
     with open(script_dir / "alerts.json", "w", encoding="utf-8") as f:
