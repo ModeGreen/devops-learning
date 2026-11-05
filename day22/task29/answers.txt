@@ -1,0 +1,3 @@
+checked: 2
+root: /dev/nvme0n1p2
+skipped: devtmpfs

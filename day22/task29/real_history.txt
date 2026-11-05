@@ -1,0 +1,2 @@
+2026-11-05 08:54:00 mindserver OK Проверено дисков: 2, проблемных: 0
+2026-11-05 08:54:00 mindserver UNKNOWN ОШИБКА: [Errno 2] No such file or directory: '/nope.yaml'
