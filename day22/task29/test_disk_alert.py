@@ -255,14 +255,14 @@ def check_step4():
         f"вывод на экран не должен меняться — ждали «Проверено дисков: 3, проблемных: 1», а вывод:\n{out}"
     assert code == 1, f"один WARNING — код выхода должен быть 1, а он {code}"
     line = one_line(history, "запуск с одним WARNING")
-    assert re.fullmatch(rf"{TIME} {re.escape(host)} WARNING проверено дисков: 3, проблемных: 1", line), \
-        f"в history.log\n    {line!r}\nа ждали «<дата> <время> {host} WARNING проверено дисков: 3, проблемных: 1»"
+    assert re.fullmatch(rf"{TIME} {re.escape(host)} WARNING Проверено дисков: 3, проблемных: 1", line), \
+        f"в history.log\n    {line!r}\nа ждали «<дата> <время> {host} WARNING Проверено дисков: 3, проблемных: 1» — тот же текст, что на экране"
 
     ok = FULL.replace("972800000", "100000000").replace("1638400000", "100000000")
     code, out, err, history = run(output=ok)
     line = one_line(history, "запуск без проблемных дисков")
-    assert line.endswith(f"{host} OK проверено дисков: 3, проблемных: 0"), \
-        f"все диски в норме — ждали в конце строки «{host} OK проверено дисков: 3, проблемных: 0», а там\n    {line!r}"
+    assert line.endswith(f"{host} OK Проверено дисков: 3, проблемных: 0"), \
+        f"все диски в норме — ждали в конце строки «{host} OK Проверено дисков: 3, проблемных: 0», а там\n    {line!r}"
 
     ig = subprocess.run(["git", "check-ignore", "-q", str(here / "history.log")], cwd=here)
     assert ig.returncode == 0, "history.log не игнорируется Git — это журнал запусков, ему не место в репозитории"
@@ -311,8 +311,8 @@ def check_step6():
     assert any(f" {host} " in l for l in lines), \
         f"в real_history.txt нет запусков на этой машине ({host}). Тест запущен на сервере?"
     assert any(" UNKNOWN ОШИБКА: " in l for l in lines), "в real_history.txt нет запуска со сломанными настройками (UNKNOWN)"
-    assert any(re.search(r" (OK|WARNING|CRITICAL) проверено дисков: \d+", l) for l in lines), \
-        "в real_history.txt нет обычного запуска (OK/WARNING/CRITICAL, «проверено дисков: N»)"
+    assert any(re.search(r" (OK|WARNING|CRITICAL) Проверено дисков: \d+", l) for l in lines), \
+        "в real_history.txt нет обычного запуска (OK/WARNING/CRITICAL, «Проверено дисков: N»)"
 
     need = ["disk_alert.py", "disk_alert.yaml", "requirements.txt", "answers.txt", "real_history.txt",
             "test_disk_alert.py", ".gitignore"]

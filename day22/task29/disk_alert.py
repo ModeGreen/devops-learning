@@ -19,6 +19,13 @@ from datetime import datetime
 def make_history_line(now, host, status, text):
     return f"{now.strftime("%Y-%m-%d %H:%M:%S")} {host} {status} {text}"
 
+def write_history(path, status, text):
+    host = subprocess.run(["hostname"], capture_output=True, text=True)
+    log_line = make_history_line(datetime.now(), host.stdout.strip() , status, text)
+    with open(path, "a", encoding="utf-8") as f:
+        print(log_line, file=f)
+    return
+
 def load_config(path):
     with open(path, encoding="utf-8") as f:
         data = yaml.safe_load(f)
@@ -94,6 +101,7 @@ def get_exit_code(alerts):
 
 def main():
     script_dir = Path(__file__).parent
+    journal = script_dir / "history.log"
     try:
         config = load_config(os.environ.get("DISK_ALERT_CONFIG", script_dir / "disk_alert.yaml"))
     except (OSError, yaml.YAMLError) as e:
@@ -117,11 +125,23 @@ def main():
     with open(script_dir / "alerts.json", "w", encoding="utf-8") as f:
         json.dump(alerts, f, indent=2, ensure_ascii=False)
 
-    print(f"Проверено дисков: {len(disks)}, проблемных: {len(alerts)}")
+    output_text = f"Проверено дисков: {len(disks)}, проблемных: {len(alerts)}"
+    print(output_text)
     for alert in alerts:
         print(f"  {alert['name']}: {alert['percent']}% — {alert['status']}")
 
-    return get_exit_code(alerts)
+    exit_code = get_exit_code(alerts)
+
+    if exit_code == 2:
+        status = "CRITICAL"
+    elif exit_code == 1:
+        status = "WARNING"
+    else:
+        status = "OK"
+
+    write_history(journal, status, output_text)
+
+    return exit_code
 
 if __name__ == "__main__":
     sys.exit(main())
