@@ -1,5 +1,5 @@
 """disk_alert.py — проверяет заполненность настоящих дисков сервера (из findmnt)
-и записывает проблемные диски в alerts.json.
+и записывает проблемные диски в alerts.json. Каждый запуск дописывает строку в history.log рядом со скриптом: время, машина, статус, результат.
 
 Запуск:     python3 disk_alert.py
 Настройки:  disk_alert.yaml рядом со скриптом или файл из переменной окружения DISK_ALERT_CONFIG.
@@ -106,17 +106,17 @@ def main():
     try:
         config = load_config(os.environ.get("DISK_ALERT_CONFIG", script_dir / "disk_alert.yaml"))
     except (OSError, yaml.YAMLError) as e:
-        massage = f"ОШИБКА: {e}"
-        print(massage, file=sys.stderr)
-        write_history(journal, "UNKNOWN", massage)
+        message = f"ОШИБКА: {e}"
+        print(message, file=sys.stderr)
+        write_history(journal, "UNKNOWN", message)
         return 3
 
     try:
         disks = parse_findmnt(get_findmnt_output())
     except RuntimeError as e:
-        massage = f"ОШИБКА: {e}"
-        print(massage, file=sys.stderr)
-        write_history(journal, "UNKNOWN", massage)
+        message = f"ОШИБКА: {e}"
+        print(message, file=sys.stderr)
+        write_history(journal, "UNKNOWN", message)
         return 3
 
     disks = remove_ignored(disks, config)
@@ -124,9 +124,9 @@ def main():
     try:
         alerts = find_alerts(disks, config)
     except ValueError as e:
-        massage = f"ОШИБКА: {e}"
-        print(f"ОШИБКА: {e}", file=sys.stderr)
-        write_history(journal, "UNKNOWN", massage)
+        message = f"ОШИБКА: {e}"
+        print(message, file=sys.stderr)
+        write_history(journal, "UNKNOWN", message)
         return 3
 
     with open(script_dir / "alerts.json", "w", encoding="utf-8") as f:
