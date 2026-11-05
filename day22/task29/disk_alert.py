@@ -14,6 +14,10 @@ import sys
 from pathlib import Path
 import subprocess
 import yaml
+from datetime import datetime
+
+def make_history_line(now, host, status, text):
+    return f"{now.strftime("%Y-%m-%d %H:%M:%S")} {host} {status} {text}"
 
 def load_config(path):
     with open(path, encoding="utf-8") as f:
