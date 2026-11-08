@@ -36,6 +36,7 @@ Every exercise, script and small project from my learning lives here, committed 
 | `day20/` | `disk_alert.py` with a YAML config: per-disk thresholds, ignore list, config validation, `venv` + PyYAML (task 27) |
 | `day21/` | Bash scripting basics: variables, script arguments, exit codes, `if` conditions — a Nagios-style health check for a service, run on a home Ubuntu Server (task 28) |
 | `day22/` | `disk_alert.py` on a home Ubuntu Server: venv from `requirements.txt`, checking which mounts are real disks, a run history log (`history.log`) with time, host and status, cron-style runs via the venv Python (task 29) |
+| `day23/` | Bash loops and arithmetic: a test runner for `disk_v3.py` (`for` over test files, counters with `$(( ))`, PASS/FAIL report and an exit code for CI) and `wait_ready.sh` — a `while` loop that waits for a service ready file with a timeout (task 30) |
 
 ## Highlights
 
@@ -62,7 +63,7 @@ python3 day2/disk_v2.py
 - [x] Python: virtual environments, YAML configs, REST APIs
 - [x] Linux: permissions, users and groups, search, pipes, processes, packages, services
 - [x] Git & GitHub workflow: branches, merges, conflicts, pull requests
-- [ ] Bash scripting
+- [x] Bash scripting
 - [ ] Networking, SSH, Nginx
 - [ ] Docker
 - [ ] CI/CD (GitHub Actions)
