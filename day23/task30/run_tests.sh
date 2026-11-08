@@ -15,7 +15,7 @@ for f in tests/*.txt; do
     fi
 done
 all_tests=$((passed + failed))
-echo "Пройдено: $passed" из $all_tests, провалено: $failed
+echo "Пройдено: $passed из $all_tests, провалено: $failed"
 if [ "$failed" -eq 0 ]; then
     exit 0
 else
