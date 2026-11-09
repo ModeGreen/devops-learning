@@ -1,7 +1,7 @@
 #!/bin/bash
 # Проверка Задачи 31. Запуск НА СЕРВЕРЕ, из папки задачи:
 #   bash check_task31.sh      — всё
-#   bash check_task31.sh 3    — только шаг 3 (и так же 1…7)
+#   bash check_task31.sh 3    — только шаг 3 (и так же 1…6)
 # Числа из answers.txt сравниваются с тем, что сейчас показывает сама машина.
 # temps.sh проверяется дважды: на настоящих датчиках и на ненастоящей папке датчиков
 # (её имя — с пробелом). Твои файлы проверка не меняет.
@@ -220,29 +220,13 @@ if run_step 5; then
 fi
 
 if run_step 6; then
-    echo "Шаг 6. Под нагрузкой"
-    if need_answers; then
-        lp=$(answer load_peak); tp=$(answer temp_peak); l1=$(answer load_1); t0=$(answer cpu_temp)
-        cores=$(nproc)
-        if ! is_dec "$lp"; then bad "load_peak: ждём число как в uptime (например 3.41), сейчас: «$lp»"
-        elif fcmp "$lp < $cores * 0.5"; then bad "load_peak: $lp — меньше половины от $cores процессоров. Нагрузка шла все 2 минуты? Записано самое большое первое число?"
-        else ok "load_peak: $lp при $cores процессорах"; fi
-        if is_dec "$lp" && is_dec "$l1" && fcmp "$lp <= $l1"; then bad "load_peak ($lp) не больше load_1 в покое ($l1) — так не бывает под нагрузкой"; fi
-        if ! is_int "$tp"; then bad "temp_peak: ждём целое число градусов, сейчас: «$tp»"
-        elif [ "$tp" -gt 120 ]; then bad "temp_peak: $tp — это миллиградусы? Раздели на 1000"
-        elif is_int "$t0" && [ "$t0" -le 120 ] && [ "$tp" -le "$t0" ]; then bad "temp_peak: $tp °C не выше, чем в покое ($t0 °C) — записана самая высокая температура датчика процессора?"
-        else ok "temp_peak: $tp °C"; fi
-        if pgrep -x yes > /dev/null; then bad "процессы yes ещё работают — нагрузка не снята (pgrep -x yes). Подожди или Ctrl+C в окне с load.sh"
-        else ok "процессов yes нет — нагрузка снята"; fi
-    fi
-fi
-
-if run_step 7; then
-    echo "Шаг 7. Git и README"
+    echo "Шаг 6. Git и README"
     for f in answers.txt temps.sh; do
         if git ls-files --error-unmatch "$f" > /dev/null 2>&1; then ok "$f добавлен в Git"
         else bad "$f не добавлен в Git (git add)"; fi
     done
+    if git ls-files --error-unmatch load.sh > /dev/null 2>&1; then bad "load.sh ещё в Git — шаг с нагрузкой убран: git rm load.sh"
+    else ok "load.sh убран"; fi
     if grep -q '`day24/`' ../../README.md 2>/dev/null; then ok "в README есть строка для day24/"
     else bad "в README (корень репозитория) нет строки для \`day24/\` в таблице Structure"; fi
 fi
