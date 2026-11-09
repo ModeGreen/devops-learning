@@ -21,9 +21,6 @@ TMP=$(mktemp -d)
 cleanup() { chmod -R u+rwx "$TMP" 2>/dev/null; rm -rf "$TMP"; }
 trap cleanup EXIT
 
-if [ "$(hostname)" != "mindserver" ]; then
-    echo "⚠️  Проверка запущена не на mindserver ($(hostname)). Числа сравниваются с ЭТОЙ машиной — запускай на сервере."
-fi
 
 # --- answers.txt ---
 # answer ключ → значение строки «ключ: значение» (пробелы по краям убраны)

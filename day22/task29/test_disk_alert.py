@@ -220,8 +220,8 @@ def check_step2():
 
 def check_step3():
     now = datetime(2026, 11, 5, 14, 0, 3)
-    got = call("make_history_line", now, "mindserver", "WARNING", "проверено дисков: 3, проблемных: 1")
-    want = "2026-11-05 14:00:03 mindserver WARNING проверено дисков: 3, проблемных: 1"
+    got = call("make_history_line", now, "home-server", "WARNING", "проверено дисков: 3, проблемных: 1")
+    want = "2026-11-05 14:00:03 home-server WARNING проверено дисков: 3, проблемных: 1"
     assert isinstance(got, str), f"make_history_line() должна вернуть строку, а вернула {type(got).__name__}: {got!r}"
     assert not got.endswith("\n"), "make_history_line() возвращает строку без \\n на конце — \\n добавится при записи"
     assert got == want, f"make_history_line() вернула\n    {got!r}\nа ждали\n    {want!r}"
@@ -272,10 +272,10 @@ def check_step4():
 def check_step5():
     host = real_hostname()
     now = datetime(2026, 11, 5, 14, 0, 3)
-    got = call("make_history_line", now, "mindserver", "UNKNOWN", 'ОШИБКА: while parsing\n  in "a.yaml", line 3\nexpected')
+    got = call("make_history_line", now, "home-server", "UNKNOWN", 'ОШИБКА: while parsing\n  in "a.yaml", line 3\nexpected')
     assert isinstance(got, str) and "\n" not in got, \
         f"текст из нескольких строк — make_history_line() должна вернуть одну строку, а вернула\n    {got!r}"
-    assert " ".join(got.split()) == '2026-11-05 14:00:03 mindserver UNKNOWN ОШИБКА: while parsing in "a.yaml", line 3 expected', \
+    assert " ".join(got.split()) == '2026-11-05 14:00:03 home-server UNKNOWN ОШИБКА: while parsing in "a.yaml", line 3 expected', \
         f"многострочный текст склеивается в одну строку через пробел, а получилось\n    {got!r}"
     cases = [
         (dict(config=None), "нет disk_alert.yaml", None),
