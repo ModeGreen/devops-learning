@@ -1,0 +1,7 @@
+mem_total_kb: 7395640
+mem_available_kb: 6534184
+mem_available_pct: 88
+cores: 8
+load_1: 0.00
+cpu_zone: thermal_zone9
+cpu_temp: 38
