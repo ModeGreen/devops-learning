@@ -7,7 +7,7 @@ for zone in "$dir"/thermal_zone*; do
         count=$((count + 1))
         name=$(cat "$zone"/type)
         temp=$(cat "$zone"/temp 2>/dev/null)
-        if [ "$temp"="" ]; then
+        if [ "$temp" = "" ]; then
             echo "$name: нет данных"
         else
             temp=$((temp / 1000))
