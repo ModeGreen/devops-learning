@@ -38,6 +38,7 @@ Every exercise, script and small project from my learning lives here, committed 
 | `day22/` | `disk_alert.py` on a home Ubuntu Server: venv from `requirements.txt`, checking which mounts are real disks, a run history log (`history.log`) with time, host and status, cron-style runs via the venv Python (task 29) |
 | `day23/` | Bash loops and arithmetic: a test runner for `disk_v3.py` (`for` over test files, counters with `$(( ))`, PASS/FAIL report and an exit code for CI) and `wait_ready.sh` — a `while` loop that waits for a service ready file with a timeout (task 30) |
 | `day24/` | Server resources on a home Ubuntu Server: memory from `free` and `/proc/meminfo` (available vs free, swap), CPU load average vs `nproc`, CPU temperature from `/sys/class/thermal`; `temps.sh` prints every sensor in °C (task 31) |
+| `day25/` | Ports and HTTP checks on a home Ubuntu Server: who listens where (`ss -tlnp`, port mapping in `docker ps`), status codes and redirects with `curl -i`; `check_http.sh` checks a URL by its HTTP status code, with a timeout and curl exit codes for "no response" (task 33) |
 
 ## Highlights
 
