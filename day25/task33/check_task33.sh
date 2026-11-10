@@ -4,6 +4,8 @@
 #   bash check_task33.sh 2    — только шаг 2 (и так же 1…4)
 # Шаг 1: ответы из answers.txt сравниваются с тем, что сервер показывает прямо сейчас
 #        (ss и GET-запросы к Navidrome и Syncthing — только чтение, на сервере ничего не меняется).
+#        answers.txt живёт только на сервере: проверка следит, чтобы он и номера портов
+#        не попали в Git.
 # Шаги 2–3: check_http.sh запускается на учебном HTTP-сервере, который проверка поднимает
 #        на 127.0.0.1 на время проверки (он отвечает нужными кодами), и на настоящих
 #        health endpoint Navidrome и Syncthing. Твои файлы проверка не меняет.
@@ -37,8 +39,48 @@ is_int() { [[ "$1" =~ ^[0-9]+$ ]]; }
 
 need_answers() {
     if [ ! -f answers.txt ]; then bad "нет файла answers.txt в папке задачи"; return 1; fi
-    if grep -q $'\r' answers.txt; then note "в answers.txt Windows-переводы строк (CRLF) — проверка их пропускает, но лучше LF (VS Code, внизу справа)"; fi
+    if grep -q $'\r' answers.txt; then note "в answers.txt Windows-переводы строк (CRLF) — проверка их пропускает, но лучше LF"; fi
     return 0
+}
+
+# --- Git: answers.txt и порты не должны попасть в репозиторий ---
+in_git() { git ls-files --error-unmatch "$1" > /dev/null 2>&1; }
+# какие номера портов искать: Navidrome, GUI Syncthing и SSH, если он не стандартный 22
+private_ports() {
+    local p
+    for p in "$(answer navidrome_port)" "$(answer syncthing_gui_port)" "$(answer ssh_port)"; do
+        if is_int "$p" && [ "$p" != "22" ]; then echo "$p"; fi
+    done | sort -u
+}
+check_answers_ignored() {
+    if in_git answers.txt; then
+        bad "answers.txt добавлен в Git, а он должен остаться только на сервере — напиши мне, уберём"
+    elif [ -f answers.txt ] && git check-ignore -q answers.txt; then
+        ok "answers.txt в Git не попадёт — его игнорирует .gitignore"
+    elif [ -f answers.txt ]; then
+        bad "answers.txt не игнорируется: нужен .gitignore со строкой answers.txt в папке задачи (подготовка), на сервере — git pull"
+    fi
+}
+
+# номера портов сервера не должны быть ни в файлах репозитория, ни в сообщениях коммитов ветки
+check_leaks() {
+    local p ports leaks=0
+    ports=$(private_ports)
+    if [ -z "$ports" ]; then
+        note "утечку номеров портов проверю, когда на сервере будет answers.txt с верными портами (шаг 1)"
+        return
+    fi
+    for p in $ports; do
+        if git grep -q -w "$p" -- . ':(exclude)check_task33.sh' ':(exclude)answers.txt' ../../README.md 2> /dev/null; then
+            bad "номер порта сервера есть в файлах репозитория: $(git grep -l -w "$p" -- . ':(exclude)check_task33.sh' ':(exclude)answers.txt' ../../README.md | tr '\n' ' ')— замени на <port> или убери. Если уже запушено — напиши мне"
+            leaks=1
+        fi
+        if git log --format='%B' main..HEAD 2> /dev/null | grep -q -w "$p"; then
+            bad "номер порта сервера есть в сообщении коммита ветки task33 — напиши мне, поправим историю"
+            leaks=1
+        fi
+    done
+    if [ "$leaks" -eq 0 ]; then ok "номеров портов сервера нет ни в файлах репозитория, ни в сообщениях коммитов"; fi
 }
 
 # --- сеть ---
@@ -163,6 +205,7 @@ try() {
 if run_step 1; then
     echo "Шаг 1. Кто слушает и что отвечает"
     if need_answers; then
+        check_answers_ignored
         # SSH
         p=$(answer ssh_port)
         if ! is_int "$p"; then bad "ssh_port: ждём число, сейчас: «$p»"
@@ -259,6 +302,7 @@ if run_step 2; then
             u="http://localhost:$GUI_PORT/rest/noauth/health"
             try "$u" "OK: $u - HTTP 200" 0 "настоящий Syncthing"
         else note "настоящий Syncthing проверю, когда в answers.txt будет верный syncthing_gui_port (шаг 1)"; fi
+        if [ "$STEP" != "all" ]; then check_leaks; fi
     fi
 fi
 
@@ -296,16 +340,23 @@ if run_step 3; then
             else bad "с max_time=2 скрипт шёл $((MS / 1000)) с — у curl --max-time не из переменной \$max_time?"; fi
             SCRIPT=./check_http.sh
         fi
+        if [ "$STEP" != "all" ]; then check_leaks; fi
     fi
 fi
 
 if run_step 4; then
     echo "Шаг 4. Git и README"
-    for f in answers.txt check_http.sh; do
-        if git ls-files --error-unmatch "$f" > /dev/null 2>&1; then ok "$f добавлен в Git"
+    for f in .gitignore check_http.sh; do
+        if in_git "$f"; then ok "$f добавлен в Git"
         else bad "$f не добавлен в Git (git add)"; fi
     done
-    if grep -q '`day25/`' ../../README.md 2>/dev/null; then ok "в README есть строка для day25/"
+    if [ -f answers.txt ]; then check_answers_ignored
+    else bad "нет answers.txt на сервере, в папке задачи (шаг 1)"; fi
+    if [ -n "$(git log --oneline main..HEAD -- answers.txt 2> /dev/null)" ]; then
+        bad "answers.txt есть в истории ветки task33 (в одном из коммитов) — напиши мне, уберём"
+    fi
+    check_leaks
+    if grep -q '`day25/`' ../../README.md 2> /dev/null; then ok "в README есть строка для day25/"
     else bad "в README (корень репозитория) нет строки для \`day25/\` в таблице Structure"; fi
 fi
 
