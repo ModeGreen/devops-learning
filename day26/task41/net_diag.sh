@@ -11,4 +11,4 @@ if [ "$code" -ne 0 ]; then
     echo "CRITICAL: gateway <шлюз> does not reply - local network problem"
     exit 2
 fi
-echo "OK: gateway <шлюз> replies"
+echo "OK: gateway "$gateway" replies"
