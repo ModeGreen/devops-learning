@@ -8,7 +8,7 @@ fi
 ping -c 1 -W "$max_wait" "$gateway" > /dev/null 2>&1
 code=$?
 if [ "$code" -ne 0 ]; then
-    echo "CRITICAL: gateway <шлюз> does not reply - local network problem"
+    echo "CRITICAL: gateway "$gateway" does not reply - local network problem"
     exit 2
 fi
 echo "OK: gateway "$gateway" replies"
