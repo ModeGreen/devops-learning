@@ -6,7 +6,7 @@ if [ -z "$gateway" ]; then
     exit 2
 fi
 ping -c 1 -W "$max_wait" "$gateway" > /dev/null 2>&1
-code=echo$?
+code=$?
 if [ "$code" -ne 0 ]; then
     echo "CRITICAL: gateway <шлюз> does not reply - local network problem"
     exit 2
