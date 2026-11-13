@@ -39,6 +39,7 @@ Every exercise, script and small project from my learning lives here, committed 
 | `day23/` | Bash loops and arithmetic: a test runner for `disk_v3.py` (`for` over test files, counters with `$(( ))`, PASS/FAIL report and an exit code for CI) and `wait_ready.sh` — a `while` loop that waits for a service ready file with a timeout (task 30) |
 | `day24/` | Server resources on a home Ubuntu Server: memory from `free` and `/proc/meminfo` (available vs free, swap), CPU load average vs `nproc`, CPU temperature from `/sys/class/thermal`; `temps.sh` prints every sensor in °C (task 31) |
 | `day25/` | Ports and HTTP checks on a home Ubuntu Server: who listens where (`ss -tlnp`, port mapping in `docker ps`), status codes and redirects with `curl -i`; `check_http.sh` checks a URL by its HTTP status code, with a timeout and curl exit codes for "no response" (task 33) |
+| `day26/` | Networking basics on a home Ubuntu Server: interfaces (`ip -br addr`), the routing table and the default gateway (`ip route`, `ip route get`), `ping` and `tracepath`; `net_diag.sh` finds where the network breaks — the gateway, the internet by IP or DNS (task 41) |
 
 ## Highlights
 
