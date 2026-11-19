@@ -50,7 +50,7 @@ def parse_addresses(text):
         name = interface["ifname"]
         for adress in interface["addr_info"]:
             if adress["family"] == "inet":
-                addr_with_pref = (f"{adress["local"]}/{str(adress["prefixlen"])}")
+                addr_with_pref = f"{adress['local']}/{adress['prefixlen']}"
                 adresses.append((name, addr_with_pref))
     return adresses
 
