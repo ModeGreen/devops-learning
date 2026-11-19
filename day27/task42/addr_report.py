@@ -1,6 +1,41 @@
 import sys
 import subprocess
 import json
+import ipaddress
+
+NETWORK_KINDS = [
+    ('127.0.0.0/8', 'loopback'),
+    ('169.254.0.0/16', 'link-local'),
+    ('10.0.0.0/8', 'private'),
+    ('172.16.0.0/12', 'private'),
+    ('192.168.0.0/16', 'private'),
+    ('100.64.0.0/10', 'shared')]
+
+KIND_NOTES = {
+    "loopback": "this machine only",
+    "link-local": "same link only",
+    "private": "not routed on the internet",
+    "shared": "Tailscale or provider CGNAT",
+    "public": "routed on the internet",
+}
+
+def get_network(address):
+    interface = ipaddress.ip_interface(address)
+    return str(interface.network)
+
+def get_kind(address):
+    ip = ipaddress.ip_interface(address).ip
+    for network, kind in NETWORK_KINDS:
+        if ip in ipaddress.ip_network(network):
+            return kind
+    return "public"
+
+def format_line(name, address):
+    net = get_network(address)
+    kind = get_kind(address)
+    note = KIND_NOTES[kind]
+    return f"{name}: {address} in {net} - {kind}, {note}"
+
 
 def get_ip_json():
     result = subprocess.run(["ip", "-j", "addr"], capture_output=True, text=True)
@@ -20,9 +55,9 @@ def parse_addresses(text):
     return adresses
 
 def main():
-    adresses = parse_addresses(get_ip_json())
-    for adress in adresses:
-        print(f"{adress[0]}: {adress[1]}")
+    addresses = parse_addresses(get_ip_json())
+    for address in addresses:
+        print(format_line(address[0], address[1]))
 
 if __name__ == "__main__":
     sys.exit(main())
