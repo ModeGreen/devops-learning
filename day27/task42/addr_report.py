@@ -40,7 +40,7 @@ def format_line(name, address):
 def get_ip_json():
     result = subprocess.run(["ip", "-j", "addr"], capture_output=True, text=True)
     if result.returncode != 0:
-        raise RuntimeError(f"findmnt завершился с кодом {result.returncode}: {result.stderr.strip()}")
+        raise RuntimeError(f"ip -j addr failed with code {result.returncode}: {result.stderr.strip()}")
     return result.stdout
 
 def parse_addresses(text):
@@ -55,7 +55,10 @@ def parse_addresses(text):
     return adresses
 
 def main():
-    addresses = parse_addresses(get_ip_json())
+    try:
+        addresses = parse_addresses(get_ip_json())
+    except RuntimeError as e:
+        print(f"ERROR: {e}", file=sys.stderr)
     for address in addresses:
         print(format_line(address[0], address[1]))
 
