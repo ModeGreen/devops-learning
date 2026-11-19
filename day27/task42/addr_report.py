@@ -59,6 +59,7 @@ def main():
         addresses = parse_addresses(get_ip_json())
     except RuntimeError as e:
         print(f"ERROR: {e}", file=sys.stderr)
+        return 1
     for address in addresses:
         print(format_line(address[0], address[1]))
 
