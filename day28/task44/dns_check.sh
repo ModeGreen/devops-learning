@@ -1,6 +1,6 @@
 #!/bin/bash
 # Checks that a DNS resolver returns the expected address for a name.
-#./dns_check.sh <name> <expected_ip>
+# ./dns_check.sh <name> <expected_ip>
 name=$1
 expected=$2
 max_wait=2
@@ -14,16 +14,14 @@ fi
 for resolver in $resolvers; do
     answer=$(dig +short +time="$max_wait" +tries=1 -t A @"$resolver" "$name")
     code=$?
+    one_line_answer=$(paste -sd ' ' - <<< "$answer")
     if [ "$code" -ne 0 ]; then
         echo "CRITICAL: $resolver does not reply"
         problems=$((problems + 1))
-    fi
-    if [[ -z "$answer" ]]; then
+    elif [[ -z "$answer" ]]; then
         echo "CRITICAL: $resolver has no address for $name"
         problems=$((problems + 1))
-    fi
-    one_line_answer=$(paste -sd ' ' - <<< "$answer")
-    if grep -qxF "$expected" <<< "$answer"; then
+    elif grep -qxF "$expected" <<< "$answer"; then
         echo "OK: $resolver resolves $name to $expected"
     else
         echo "CRITICAL: $resolver resolves $name to $one_line_answer, expected $expected"
