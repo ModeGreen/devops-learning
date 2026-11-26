@@ -41,6 +41,7 @@ Every exercise, script and small project from my learning lives here, committed 
 | `day25/` | Ports and HTTP checks on a home Ubuntu Server: who listens where (`ss -tlnp`, port mapping in `docker ps`), status codes and redirects with `curl -i`; `check_http.sh` checks a URL by its HTTP status code, with a timeout and curl exit codes for "no response" (task 33) |
 | `day26/` | Networking basics on a home Ubuntu Server: interfaces (`ip -br addr`), the routing table and the default gateway (`ip route`, `ip route get`), `ping` and `tracepath`; `net_diag.sh` finds where the network breaks — the gateway, the internet by IP or DNS (task 41) |
 | `day27/` | IPv4 addressing on a home Ubuntu Server: prefixes and subnet masks, private, shared (CGNAT, Tailscale) and public ranges, NAT and the public address; `addr_report.py` parses `ip -j addr` and shows each IPv4 address with its network and kind using Python's `ipaddress` (task 42) |
+| `day28/` | DNS on a home Ubuntu Server: how a name becomes an address (`/etc/hosts`, `systemd-resolved` and `resolvectl`, Tailscale MagicDNS and split DNS), `A` and `CNAME` records, TTL and caching, reading `dig` output; `dns_check.sh` asks several public resolvers whether a name points to the expected address — the check to run after changing a DNS record (task 44) |
 
 ## Highlights
 
